@@ -46,7 +46,12 @@ class TableViewController: UIViewController {
             }
         }
     
- 
+    @IBAction func logout(_ sender: Any) {
+        OnTheMapClient.logout {
+            let loginController = self.storyboard!.instantiateViewController(withIdentifier: "LoginViewController")
+            self.present(loginController, animated: true, completion: nil)
+        }
+    }
 
 }
     

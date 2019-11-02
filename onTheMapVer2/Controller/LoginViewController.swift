@@ -97,6 +97,7 @@ class LoginViewController: UIViewController, UINavigationControllerDelegate, UIT
     
     }
     
+    
     func setLoggingIn(_ loggingIn: Bool) {
         if loggingIn {
             activityIndicator.startAnimating()

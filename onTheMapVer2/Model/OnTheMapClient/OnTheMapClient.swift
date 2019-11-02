@@ -21,64 +21,85 @@ class OnTheMapClient {
         static var newLat = 0
         static var newLong = 0
     }
+
+    enum Endpoints {
+        static let base = "https://onthemap-api.udacity.com/v1"
+        
+        case getLoginSession
+        case deleteLoginSession
+        case getStudentLocation
+        case postStudentLocation
+        case getUserName(uniqueKey: String)
+        
+        var stringValue: String {
+            switch self {
+            case .getLoginSession, .deleteLoginSession: return Endpoints.base + "/session"
+            case .getStudentLocation: return Endpoints.base + "/StudentLocation" + "?limit=100&order=-updatedAt"
+            case .postStudentLocation: return Endpoints.base + "/StudentLocation"
+            case .getUserName(let uniqueKey): return Endpoints.base + "/users/\(uniqueKey)"
+            }
+        }
+        
+        var url: URL {
+            return URL(string: stringValue)!
+        }
+        
+    }
     
 
-    
-    
-    class func login(username: String, password: String, completion: @escaping (Bool, Error?) -> Void) {
-        let myBody =  "{\"udacity\": {\"username\": \"" + username + "\", \"password\": \"" + password + "\"}}"
+    class func logout(completion: @escaping () -> Void) {
         var request = URLRequest(url: URL(string: "https://onthemap-api.udacity.com/v1/session")!)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        request.httpBody = myBody.data(using: .utf8)
+        request.httpMethod = "DELETE"
+        var xsrfCookie: HTTPCookie? = nil
+        let sharedCookieStorage = HTTPCookieStorage.shared
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
         let session = URLSession.shared
         let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(false, error)
-                }
+            if error != nil { // Handle error…
                 return
             }
-            
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {print("Your request returned a status code other than 2xx!")
-                completion(false, error)
-                return
-            }
-            
-            
-            let range = 5..<data.count
-            let newData = data.subdata(in: range) /* subset response data! */
+            let range = 5..<data!.count
+            let newData = data!.subdata(in: range) /* subset response data! */
             print(String(data: newData, encoding: .utf8)!)
             
-            do {
-                let decoder = JSONDecoder()
-                let myInfo:Userinfo
-                do {
-                    
-                    myInfo = try decoder.decode(Userinfo.self, from: newData)
-                    print(myInfo)
-                    print(myInfo.account.key)
-                    AuthUser.key = myInfo.account.key
-                    print(myInfo.session.id)
-                    completion(true, nil)
-                    
-                    
-                } catch {
-                    
-                    completion(false, error)
-                }
-            }
-            
-            
         }
+        completion()
         task.resume()
+        print("done")
+    }
+    
+
+    class func login(username: String, password: String, completion: @escaping (Bool, Error?) -> Void) {
+        print("logging in")
+        let loginData = UserLogin(username: username, password: password)
+        
+ 
+        let body = UserRequest(loginRequest: loginData)
+        
+        taskForPOSTRequest(url: Endpoints.getLoginSession.url, delChars:true, responseType: Userinfo.self, body: body) { response, error in
+            if let response = response {
+                print(response)
+                AuthUser.key = response.account.key
+                print(response.account.key)
+                completion(true, nil)
+                print("login complete")
+                
+            } else {
+                print("errot")
+                completion(false, error)
+            }
+        }
+
         
     }
     
     
-    class   func taskForGETRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask {
+    class func taskForGETRequest<ResponseType: Decodable>(url: URL, delChars:Bool, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void) -> URLSessionDataTask {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             
             
@@ -93,11 +114,14 @@ class OnTheMapClient {
                 completion(nil, error)
                 return
             }
+            var newData = data
+            if (delChars) {
+                let range = 5..<data.count
+                newData = data.subdata(in: range) /* subset response data! */
+            }
             
-            let range = 5..<data.count
-            let newData = data.subdata(in: range) /* subset response data! */
             print(String(data: newData, encoding: .utf8)!)
-            print("after get name")
+            
             let decoder = JSONDecoder()
             do {
                 let responseObject = try decoder.decode(ResponseType.self, from: newData)
@@ -118,22 +142,19 @@ class OnTheMapClient {
                     }
                 }
             }
+            
         }
         task.resume()
         
         return task
-        
     }
-    
     
     class func getUserName(completion: @escaping (Bool, Error?) -> Void) {
         print("testing get call")
         
-        let myReq = "https://onthemap-api.udacity.com/v1/users/" + AuthUser.key
-        //var request1 = URLRequest(url: URL(string: myReq)!)
-        print(myReq)
+        //let myReq = "https://onthemap-api.udacity.com/v1/users/" + AuthUser.key
         
-        taskForGETRequest(url:URL(string: myReq)!, responseType: UdacityUser.self)
+        taskForGETRequest(url:Endpoints.getUserName(uniqueKey: AuthUser.key).url, delChars:true, responseType: UdacityUser.self)
         { response, error in
             print("in new user get name")
             if let response = response {
@@ -163,101 +184,46 @@ class OnTheMapClient {
     }
     
     
-    
-    class func getMapData(completion: (@escaping ( Error?) -> Void) )  {
+    class func getMapData(completion: (@escaping ( Error?) -> Void) ) {
         
-        // Do any additional setup after loading the view.
-        var newMap = MapPosition(firstName: "", lastName: "", longitude: 0.00, latitude: 0.00, mediaURL: "", mapString: "")
+        taskForGETRequest(url:Endpoints.getStudentLocation.url,  delChars:false, responseType: Results.self)
+        { response, error in
+            if let response = response {
+                var newMap = MapPosition(firstName: "", lastName: "", longitude: 0.00, latitude: 0.00, mediaURL: "", mapString: "")
         //initialize students array
-        studentPosition.removeAll()
-        let request = URLRequest(url: URL(string: "https://onthemap-api.udacity.com/v1/StudentLocation?limit=100&order=-updatedAt")!)
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(error)
-                }
-                return
+                studentPosition.removeAll()
+                print(response as Any)
+                print(response.results[1])
+                for (_, value) in response.results.enumerated()
+                {
+                    let firstName = value.firstName
+                    let lastName  = value.lastName
+                    let longitude = value.longitude
+                    let latitude  = value.latitude
+                    let mediaURL  = value.mediaURL
+                    let mapString = value.mapString
+                    
+                    print(firstName);
+                    print(lastName);
+                    print(longitude);
+                    print(latitude);
+                    print(mediaURL);
+                    
+                    print(mapString)
+                    newMap = MapPosition(firstName: firstName, lastName: lastName, longitude: longitude, latitude: latitude, mediaURL: mediaURL, mapString: mapString)
+                    studentPosition.append(newMap)
+                    print(studentPosition.count)
+              }
+             completion(nil)
             }
-            
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                completion(error)
-                return
+            else {
+               print(error!)
+               completion(error)
             }
-            
-            
-            print(String(data: data, encoding: .utf8)!)
-            
-            let parsedResult: [String:AnyObject]!
-            do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:AnyObject]
-            } catch {
-                completion(error)
-                return
-            }
-            
-            guard let locationData = parsedResult["results"] as? [NSDictionary] else {
-                completion(error)
-                return
-            }
-            
-            
-            
-            /* Store all "Matchmaking" categories */
-            for locationInfo in locationData {
-                
-                guard let firstName = locationInfo["firstName"] as? String else {
-                    completion(error)
-                    return
-                }
-                print(firstName);
-                guard let lastName = locationInfo["lastName"] as? String else {
-                    completion(error)
-                    return
-                }
-                print(lastName);
-                
-                guard let longitude = locationInfo["longitude"] as? Double else {
-                    completion(error)
-                    return
-                }
-                print(longitude);
-                
-                guard let latitude = locationInfo["latitude"] as? Double else {
-                    completion(error)
-                    return
-                }
-                print(latitude);
-                guard let mediaURL = locationInfo["mediaURL"] as? String else {
-                    completion(error)
-                    return
 
-                }
-                print(mediaURL);
-                guard let mapString = locationInfo["mapString"] as? String else {
-                   completion(error)
-                    return
-                }
-                print(mapString);
-                
-                newMap.firstName = firstName
-                newMap.lastName = lastName
-                newMap.longitude = longitude
-                newMap.latitude = latitude
-                newMap.mediaURL = mediaURL
-                newMap.mapString = mapString
-                
-                studentPosition.append(newMap)
-                print(studentPosition.count)
-
-            }
-            completion(nil)
         }
-        task.resume()
-        
-        
-        
     }
+    
     
     class  func getCoord(placename: String, completion: (@escaping (NewLocation, Error?) -> Void) )   {
             let latitude: CLLocationDegrees = 0.0
@@ -289,41 +255,72 @@ class OnTheMapClient {
         
         
     }
+    
+    
+    class func taskForPOSTRequest<RequestType: Encodable, ResponseType: Decodable>(url: URL, delChars:Bool, responseType: ResponseType.Type, body: RequestType, completion: @escaping (ResponseType?, Error?) -> Void) {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try! JSONEncoder().encode(body)
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(nil, error)
+                }
+                return
+            }
+
+
+            var newData = data
+            if (delChars) {
+                let range = 5..<data.count
+                newData = data.subdata(in: range) /* subset response data! */
+            }
+            
+            print(String(data: newData, encoding: .utf8)!)
+            let decoder = JSONDecoder()
+            do {
+                let responseObject = try decoder.decode(ResponseType.self, from: newData)
+                DispatchQueue.main.async {
+                    completion(responseObject, nil)
+                }
+            } catch {
+                do {
+                    let errorResponse = try decoder.decode(OnTheMapResponse.self, from: data) as Error
+                    DispatchQueue.main.async {
+                        completion(nil, errorResponse)
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(nil, error)
+                    }
+                }
+            }
+        }
+        task.resume()
+    }
+    
+ 
     class func addNewMapData(newPlaceText: String, newPlace: CLLocationCoordinate2D, newUrl: String, completion: (@escaping ( Error?) -> Void) ) {
         print("here in new map location")
         
         let newLat = String(newPlace.latitude)
         let newlong = String(newPlace.longitude)
-        let someBody = "{\"uniqueKey\": \"" + AuthUser.key + "\", \"firstName\": \"" +  AuthUser.nickname + "\", \"lastName\": \"" +  AuthUser.last_name
-        let someBody1 = "\",\"mapString\": \"" + newPlaceText
-        let someBody2 = "\", \"mediaURL\": \"" +  newUrl
-        let someBody3 =  "\", \"latitude\": " + newLat
-        let someBody4 = ", \"longitude\": " + newlong +  "}"
-        let completebody = someBody + someBody1 + someBody2 + someBody3 + someBody4
         
-        var request = URLRequest(url: URL(string: "https://onthemap-api.udacity.com/v1/StudentLocation")!)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body = UserLocation(uniqueKey: AuthUser.key, firstName: AuthUser.nickname, lastName: AuthUser.last_name, mapString: newPlaceText, mediaURL: newUrl, latitude: Float(newLat) as! Float, longitude: Float(newlong) as! Float)
         
-        request.httpBody = completebody.data(using: .utf8)
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) { data, response, error in
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    completion(error)
-                }
-                return
-            }
-            
-            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {print("Your request returned a status code other than 2xx!")
+        taskForPOSTRequest(url: Endpoints.postStudentLocation.url, delChars:false, responseType: UserLocationResponse.self, body: body) { response, error in
+            if let response = response {
+                print(response)
+                completion(nil)
+                
+            } else {
+                print("errot")
                 completion(error)
-                return
             }
-            print(String(data: data, encoding: .utf8)!)
-            completion(nil)
         }
-        task.resume()
 
     }
 

@@ -14,7 +14,7 @@
         <!--loginViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="loginComplete" id="BYZ-38-t0r" userLabel="loginViewController" customClass="LoginViewController" customModule="onTheMapVer2" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" title="loginComplete" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" userLabel="loginViewController" customClass="LoginViewController" customModule="onTheMapVer2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="GradientView" customModule="onTheMapVer2" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -126,48 +126,76 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKQ-XS-oV7" userLabel="On The Map">
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b3a-8k-7wA">
                                 <rect key="frame" x="0.0" y="88" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem title="Item" image="icon_pin" width="197" id="3bP-p7-nIe" userLabel="addPin">
-                                        <connections>
-                                            <segue destination="hB1-ui-RMk" kind="show" id="KtP-qb-TeH"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem image="icon_refresh" width="172" style="plain" id="oUm-Pe-CdH">
-                                        <connections>
-                                            <action selector="refreshLocation:" destination="C1k-OV-LBi" id="eWB-oh-1kZ"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <navigationItem title="On The Map" id="7px-Fk-WVu" userLabel="On The Map">
+                                        <barButtonItem key="leftBarButtonItem" style="plain" id="mou-Sb-XIw">
+                                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="n14-ia-HlY">
+                                                <rect key="frame" x="16" y="7" width="83" height="30"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <state key="normal" title="Logout"/>
+                                            </button>
+                                            <connections>
+                                                <action selector="logout:" destination="C1k-OV-LBi" id="NvH-dv-AJ9"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <rightBarButtonItems>
+                                            <barButtonItem image="icon_refresh" width="50" style="plain" id="hob-z1-pyo">
+                                                <connections>
+                                                    <action selector="refreshLocation:" destination="C1k-OV-LBi" id="xCd-Or-qOn"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem title="Item" image="icon_pin" width="50" id="2Kx-kQ-H5J" userLabel="addPin">
+                                                <connections>
+                                                    <segue destination="hB1-ui-RMk" kind="show" id="g2S-S5-E4e"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </rightBarButtonItems>
+                                    </navigationItem>
                                 </items>
-                            </toolbar>
+                            </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" sectionIndexMinimumDisplayRowCount="1" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="lL1-Lb-gml">
                                 <rect key="frame" x="0.0" y="132" width="375" height="597"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="detailButton" indentationWidth="10" reuseIdentifier="studentCell" textLabel="N7r-Ee-OzW" imageView="cvt-0c-RLZ" style="IBUITableViewCellStyleDefault" id="rVK-2c-Fwo">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="studentCell" textLabel="N7r-Ee-OzW" detailTextLabel="PFc-Bz-IYI" imageView="Kmt-hk-7EW" style="IBUITableViewCellStyleSubtitle" id="rVK-2c-Fwo">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rVK-2c-Fwo" id="UVN-TZ-Ofh">
-                                            <rect key="frame" x="0.0" y="0.0" width="328" height="43.666666666666664"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" highlightedImage="icon_pin" translatesAutoresizingMaskIntoConstraints="NO" id="Ctg-fx-xz5">
-                                                    <rect key="frame" x="164" y="21" width="0.0" height="0.0"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icon_pin" highlightedImage="icon_pin" translatesAutoresizingMaskIntoConstraints="NO" id="Ctg-fx-xz5">
+                                                    <rect key="frame" x="164" y="-23" width="0.0" height="88"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" id="K6J-DM-ajI"/>
+                                                    </constraints>
                                                 </imageView>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="N7r-Ee-OzW">
-                                                    <rect key="frame" x="15" y="0.0" width="313" height="43.666666666666664"/>
+                                                    <rect key="frame" x="54" y="5" width="33.333333333333336" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" highlightedImage="icon_pin" id="cvt-0c-RLZ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="PFc-Bz-IYI">
+                                                    <rect key="frame" x="54" y="25.333333333333332" width="43.666666666666664" height="14.333333333333334"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="icon_pin" id="Kmt-hk-7EW">
+                                                    <rect key="frame" x="15" y="9" width="24" height="24"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Ctg-fx-xz5" firstAttribute="top" secondItem="UVN-TZ-Ofh" secondAttribute="topMargin" constant="-34" id="F6A-w2-usp"/>
+                                                <constraint firstItem="Ctg-fx-xz5" firstAttribute="leading" secondItem="UVN-TZ-Ofh" secondAttribute="leading" constant="164" id="Fzc-wn-lYC"/>
+                                                <constraint firstItem="Ctg-fx-xz5" firstAttribute="centerY" secondItem="Kmt-hk-7EW" secondAttribute="centerY" id="tFK-Kp-KgK"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
@@ -179,13 +207,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="AKQ-XS-oV7" firstAttribute="trailing" secondItem="YcJ-3n-ydg" secondAttribute="trailing" id="AGd-Y0-QME"/>
-                            <constraint firstItem="lL1-Lb-gml" firstAttribute="top" secondItem="AKQ-XS-oV7" secondAttribute="bottom" id="Nrw-dS-Hfp"/>
-                            <constraint firstItem="AKQ-XS-oV7" firstAttribute="leading" secondItem="YcJ-3n-ydg" secondAttribute="leading" id="X4m-g3-lbC"/>
-                            <constraint firstItem="lL1-Lb-gml" firstAttribute="trailing" secondItem="YcJ-3n-ydg" secondAttribute="trailing" id="dVH-z1-jIQ"/>
-                            <constraint firstItem="AKQ-XS-oV7" firstAttribute="top" secondItem="YcJ-3n-ydg" secondAttribute="top" id="fgh-hs-GEc"/>
-                            <constraint firstItem="lL1-Lb-gml" firstAttribute="bottom" secondItem="YcJ-3n-ydg" secondAttribute="bottom" id="mhz-7h-fm0"/>
-                            <constraint firstItem="lL1-Lb-gml" firstAttribute="leading" secondItem="YcJ-3n-ydg" secondAttribute="leading" id="tJk-ex-vC6"/>
+                            <constraint firstItem="lL1-Lb-gml" firstAttribute="leading" secondItem="YcJ-3n-ydg" secondAttribute="leading" id="AOC-JM-fqQ"/>
+                            <constraint firstItem="lL1-Lb-gml" firstAttribute="bottom" secondItem="YcJ-3n-ydg" secondAttribute="bottom" id="Qzg-BW-RC6"/>
+                            <constraint firstItem="b3a-8k-7wA" firstAttribute="trailing" secondItem="YcJ-3n-ydg" secondAttribute="trailing" id="nHA-Q0-WQU"/>
+                            <constraint firstItem="lL1-Lb-gml" firstAttribute="top" secondItem="b3a-8k-7wA" secondAttribute="bottom" id="njy-qB-yki"/>
+                            <constraint firstItem="lL1-Lb-gml" firstAttribute="trailing" secondItem="YcJ-3n-ydg" secondAttribute="trailing" id="q3T-L5-KcT"/>
+                            <constraint firstItem="b3a-8k-7wA" firstAttribute="leading" secondItem="YcJ-3n-ydg" secondAttribute="leading" id="rJ1-2W-OPc"/>
+                            <constraint firstItem="b3a-8k-7wA" firstAttribute="top" secondItem="YcJ-3n-ydg" secondAttribute="top" id="wIO-1v-FeK"/>
+                            <constraint firstItem="lL1-Lb-gml" firstAttribute="top" secondItem="b3a-8k-7wA" secondAttribute="bottom" id="zLl-Xe-yg6"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="YcJ-3n-ydg"/>
                     </view>
@@ -255,40 +284,47 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="SLd-2B-9Wz">
-                                <rect key="frame" x="0.0" y="88" width="375" height="641"/>
+                                <rect key="frame" x="0.0" y="83" width="375" height="646"/>
                             </mapView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="2ce-cX-yJh" userLabel="On The Map">
-                                <rect key="frame" x="0.0" y="44" width="375" height="44"/>
-                                <items>
-                                    <barButtonItem title="Item" image="icon_pin" width="197" id="jhw-h0-gzs" userLabel="addPin">
-                                        <connections>
-                                            <segue destination="hB1-ui-RMk" kind="show" id="BCf-PL-fer"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem image="icon_refresh" width="172" style="plain" id="2ZP-kM-O6p">
-                                        <connections>
-                                            <action selector="refreshLocation:" destination="vNM-BT-UI8" id="siG-36-mnk"/>
-                                        </connections>
-                                    </barButtonItem>
-                                </items>
-                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="top" secondItem="2ce-cX-yJh" secondAttribute="bottom" id="2yL-Lj-7bE"/>
-                            <constraint firstItem="2ce-cX-yJh" firstAttribute="trailing" secondItem="onV-1H-zDK" secondAttribute="trailing" id="GLu-h9-UwM"/>
-                            <constraint firstItem="2ce-cX-yJh" firstAttribute="top" secondItem="onV-1H-zDK" secondAttribute="top" id="HlU-tX-lPv"/>
-                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="trailing" secondItem="onV-1H-zDK" secondAttribute="trailing" id="Hrf-br-20X"/>
-                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="bottom" secondItem="onV-1H-zDK" secondAttribute="bottom" id="ZVL-LR-VZs"/>
-                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="top" secondItem="2ce-cX-yJh" secondAttribute="bottom" id="fKe-ye-ZRe"/>
-                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="leading" secondItem="onV-1H-zDK" secondAttribute="leading" id="ggj-zG-6Ia"/>
-                            <constraint firstItem="2ce-cX-yJh" firstAttribute="leading" secondItem="onV-1H-zDK" secondAttribute="leading" id="oiO-F9-PpG"/>
+                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="trailing" secondItem="onV-1H-zDK" secondAttribute="trailing" id="JFb-5J-Zyh"/>
+                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="leading" secondItem="onV-1H-zDK" secondAttribute="leading" id="Kr3-y2-Bjp"/>
+                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="bottom" secondItem="onV-1H-zDK" secondAttribute="bottom" id="Zt1-HS-05m"/>
+                            <constraint firstItem="SLd-2B-9Wz" firstAttribute="centerY" secondItem="6v5-B5-LVe" secondAttribute="centerY" id="xQ3-VV-GfV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="onV-1H-zDK"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="icon_world" id="NTa-G6-FLO"/>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="Dfo-eT-uVf"/>
+                    <navigationItem key="navigationItem" title="On The Map" id="ZGV-55-swZ" userLabel="On The Map">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="G8v-zi-B80">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aMs-V5-MbF">
+                                <rect key="frame" x="16" y="7" width="83" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Logout"/>
+                                <connections>
+                                    <action selector="logout:" destination="vNM-BT-UI8" eventType="touchUpInside" id="GvY-G7-Gu7"/>
+                                </connections>
+                            </button>
+                            <connections>
+                                <action selector="logout:" destination="vNM-BT-UI8" id="j4c-ca-aH4"/>
+                            </connections>
+                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem image="icon_refresh" width="50" style="plain" id="LE9-hu-aAb">
+                                <connections>
+                                    <action selector="refreshLocation:" destination="vNM-BT-UI8" id="6Vp-aY-DnO"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="icon_pin" width="50" id="o2B-qa-vSl" userLabel="addPin">
+                                <connections>
+                                    <segue destination="hB1-ui-RMk" kind="show" id="7nL-Zr-w0b"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="mapView" destination="SLd-2B-9Wz" id="aLI-h4-eMI"/>
@@ -307,10 +343,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="DZC-dd-vUR" userLabel="stack3">
-                                <rect key="frame" x="0.0" y="63" width="375" height="287"/>
+                                <rect key="frame" x="0.0" y="63" width="375" height="246"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Where are you                 Studying                              today" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="pPt-wz-r0X">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="287"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="246"/>
                                         <color key="backgroundColor" red="1" green="0.97505432579287377" blue="0.87894027203680825" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="textColor" red="0.12083942334720528" green="0.20513829421107507" blue="0.4034058723564955" alpha="0.93803344330000005" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="39"/>
@@ -326,7 +362,7 @@
                                 </constraints>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter location here" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bFF-Ru-J0D">
-                                <rect key="frame" x="0.0" y="350" width="375" height="150"/>
+                                <rect key="frame" x="0.0" y="309" width="375" height="150"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="q9K-FT-dX8"/>
                                 </constraints>
@@ -335,7 +371,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3z6-KJ-RGW">
-                                <rect key="frame" x="51" y="560" width="243" height="52"/>
+                                <rect key="frame" x="51" y="519" width="243" height="44"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="33"/>
                                 <state key="normal" title="Find On The Map">
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -474,7 +510,7 @@
         </namedColor>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="1cA-pz-RN6"/>
+        <segue reference="7nL-Zr-w0b"/>
         <segue reference="X8L-eB-FKC"/>
     </inferredMetricsTieBreakers>
 </document>
